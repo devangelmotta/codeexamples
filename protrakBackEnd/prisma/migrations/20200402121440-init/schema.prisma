@@ -1,0 +1,425 @@
+datasource mysql {
+  provider  = "mysql"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+
+model User {
+  id                String      @id @default(cuid())
+  userName          String?
+  firstName         String
+  lastName          String
+  email             String
+  profileImg        String?
+  profileThumb      String?
+  auth0Id           String
+  socialSignIn      String?
+  hasOnboarded      Boolean?    @default(false)
+  lastLogin         DateTime?
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Subscription {
+  id                String      @id @default(cuid())
+  companyId         Company
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model SubscriptionPayment {
+  id                String      @id @default(cuid())
+  subscriptionId    Subscription
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model SubscriptionDiscount {
+  id                String      @id @default(cuid())
+  subscriptionId    Subscription
+  discountCode      String
+  discountAmount    Float
+  timesUsed         Int
+  createdAt         DateTime    @default(now())
+}
+
+model BillingProfile {
+  id                String      @id @default(cuid())
+  paymentMethodId   PaymentMethod
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Referral {
+  id                  String      @id @default(cuid())
+  userId              User
+  referredEmail       String
+  referredMonthsPaid  Int
+  createdAt           DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model UserRole {
+  id            String      @id @default(cuid())
+  roleType      RoleType
+  userId        User
+  companyId     Company
+  projectId     Project
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model UserNotification {
+  id            String      @id @default(cuid())
+  userId        User
+  title         String
+  description   String
+  new           Boolean
+  archived      Boolean
+  createdAt     DateTime    @default(now())
+}
+
+model PaymentMethod {
+  id            String      @id @default(cuid())
+  externalId    String
+  lastFour      Int
+  vendor        String
+  createdAt     DateTime    @default(now())
+}
+
+model Discount {
+  id                String      @id @default(cuid())
+  discountCode      String
+  expirationDate    DateTime
+  timesItCanBeUsed  Int
+  createdAt         DateTime    @default(now())
+}
+
+model Invitation {
+  id                String      @id @default(cuid())
+  inviterUserId     User
+  email             String
+  phone             Int
+  url               String
+  timesClicked      Int
+  clickedMetaData   String?
+  createdAt         DateTime    @default(now())
+}
+
+model Company {
+  id            String      @id @default(cuid())
+  name          String
+  logo          String?
+  logoThumb     String?
+  status        CompanyStatus
+  addresses     Address[]
+  companyType   CompanyType?
+  contacts      Contact[]
+  userId        User
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Address {
+  id            String      @id @default(cuid())
+  type          AddressType?
+  addressOne    String
+  addressTwo    String?
+  cityId        City?
+  stateId       State?
+  postalCode    String?
+  countryId     Country?
+  companies     Company[]
+  suppliers     Supplier[]  @relation("SupplierAddresses")
+  clients       Client[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Contact {
+  id                String      @id @default(cuid())
+  value             String
+  contactType       ContactType
+  companies         Company[]
+  suppliers         Supplier[]
+  clients           Client[]
+  createdAt         DateTime    @default(now())
+}
+
+model ShareLink {
+  id                String      @id @default(cuid())
+  url               String
+  senderUserId      User
+  timesClicked      Int
+  clickedMetaData   String
+  projectId         Project
+  invoiceId         Invoice
+  proposalId        Proposal
+  expiredAt         DateTime
+  createdAt         DateTime    @default(now())
+}
+
+model Project {
+  id                String      @id @default(cuid())
+  name              String
+  notes             String
+  addressId         Address?
+  companyId         Company
+  suppliers         Supplier[]
+  clients           Client[]
+  projectBudgets    ProjectBudget[]
+  projectTimelines  ProjectTimeline[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model ProjectBudget {
+  id                String                @id @default(cuid())
+  amount            Float
+  status            ProjectBudgetStatus
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+}
+
+model FeedEntry {
+  id                String      @id @default(cuid())
+  projectId         Project
+  title             String
+  body              String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model FeedComment {
+  id                String      @id @default(cuid())
+  content           String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model FeedReaction {
+  id                String      @id @default(cuid())
+  reactionType      ReactionType
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+//only supplierId or clientId can be different of null, its determine witch type of proposal is, if is a client proposal or a supplier proposal
+model Proposal {
+  id                        String      @id @default(cuid())
+  name                      String
+  projectId                 Project?
+  supplierId                Supplier?
+  clientId                  Client?
+  proposalOwnerId           User
+  startDate                 DateTime
+  endDate                   DateTime
+  budgetProposed            Float?
+  details                   String
+  status                    ProposalStatus
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+}
+
+model ProjectTimeline {
+  id                String                  @id @default(cuid())
+  startDate         DateTime
+  endDate           DateTime
+  status            ProjectTimelineStatus
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+}
+
+model Supplier {
+  id                        String      @id @default(cuid())
+  name                      String
+  userId                    User?
+  companyId                 Company
+  projects                  Project[]
+  contacts                  Contact[]
+  addresses                 Address[]   @relation("SupplierAddresses")
+  createdAt                 DateTime    @default(now())
+  updatedAt                 DateTime    @updatedAt
+}
+
+model SupplierNote {
+  id            String      @id @default(cuid())
+  supplierId    Supplier
+  note          String
+  createdAt     DateTime    @default(now())
+}
+
+model Invoice {
+  id                String      @id @default(cuid())
+  number            Int
+  status            InvoiceStatus
+  dueDate           DateTime
+  notes             String
+  invoiceOwnerId    User
+  clientId          Client
+  taxRate           Float?
+  projectId         Project
+  proposalId        Proposal
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model InvoiceLineItem {
+  id                String      @id @default(cuid())
+  description       String
+  unitPrice         Float
+  quantity          Float
+  amount            Float
+  taxable           Boolean
+  discount          Float?
+  invoiceId         Invoice
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model InvoicePayment {
+  id              String      @id @default(cuid())
+  invoiceId       Invoice
+  paidByUserId    User?
+  paidOnline      Boolean
+  transactionId   String?
+  createdAt       DateTime    @default(now())
+}
+
+model ChangeOrder {
+  id                  String      @id @default(cuid())
+  projectId           Project
+  requestedByUserId   User
+  status              ChangeOrderStatus
+  description         String
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+}
+
+model Client {
+  id                String      @id @default(cuid())
+  nickname          String
+  firstName         String
+  lastName          String?
+  userId            User?
+  clientImg         String?
+  clientThumb       String?
+  projects          Project[]
+  proposals         Proposal[]
+  contacts          Contact[]
+  addresses         Address[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model ClientNote {
+  id                String      @id @default(cuid())
+  clientId          Client
+  note              String
+  createdAt         DateTime    @default(now())
+}
+
+model FeedMedia {
+  id                String      @id @default(cuid())
+  feedEntryId       FeedEntry
+  mediaUrl          String
+  thumbUrl          String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model City {
+  id                String      @id @default(cuid())
+  name              String
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model State {
+  id                String      @id @default(cuid())
+  name              String
+  cities            City[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+model Country {
+  id                String      @id @default(cuid())
+  name              String
+  states            State[]
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+}
+
+enum RoleType {
+  ROLE_TYPE_1
+  ROLE_TYPE_2
+  ROLE_TYPE_3
+}
+
+enum CompanyStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  OLD
+}
+
+enum CompanyType {
+  GC
+  GOVERNMENT
+  REMODELING
+  DESIGNER
+}
+
+enum AddressType {
+  COMMERCIAL
+  RESIDENTIAL
+}
+
+enum ContactType {
+  EMAIL
+  PHONE_NUMBER
+  ADDRESS
+}
+
+enum ProjectBudgetStatus {
+  APPROVED
+  PENDING
+  DECLINED
+}
+
+enum ReactionType {
+  REACTION_TYPE_A
+  REACTION_TYPE_B
+  REACTION_TYPE_C
+}
+
+enum ProjectTimelineStatus {
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum InvoiceStatus {
+  APPROVED
+  PENDING
+  DECLINED
+}
+
+enum ChangeOrderStatus {
+  STATUS_A
+  STATUS_B
+  STATUS_C
+}
+
+enum ProposalStatus {
+  APPROVED
+  PENDING
+  DECLINED
+}
+

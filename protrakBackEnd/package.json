@@ -1,0 +1,70 @@
+{
+  "name": "protrak-server",
+  "version": "1.0.0",
+  "license": "ISC",
+  "author": "HelloBuild.co",
+  "private": true,
+  "keywords": [
+    "node",
+    "express",
+    "graphql",
+    "apollo"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hellobuild/protrakBackEnd.git"
+  },
+  "scripts": {
+    "postinstall": "npm run run:migrations",
+    "dev": "serverless offline --port 4000",
+    "lint": "eslint --fix \"src/**/*.js\"",
+    "run:seeders": "ts-node prisma/seed.ts",
+    "run:migrations": "prisma2 migrate save --name 'init' --experimental && prisma2 migrate up --experimental && prisma2 generate"
+  },
+  "dependencies": {
+    "@nexus/schema": "^0.13.1",
+    "@prisma/client": "^2.0.0-preview025",
+    "apollo-server-express": "^2.9.16",
+    "apollo-server-lambda": "^2.10.0",
+    "aws-sdk": "^2.644.0",
+    "dotenv": "^8.2.0",
+    "graphql": "^14.6.0",
+    "graphql-middleware": "^4.0.2",
+    "graphql-shield": "^7.0.12",
+    "graphql-tools": "^4.0.6",
+    "nexus": "^0.12.0",
+    "nexus-prisma": "^0.10.0",
+    "node-fetch": "^2.6.0",
+    "validatorjs": "^3.18.1"
+  },
+  "devDependencies": {
+    "@prisma/cli": "^2.0.0-preview025",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "faker": "^4.1.0",
+    "husky": "^4.2.3",
+    "lint-staged": "^10.0.8",
+    "prettier": "^2.0.2",
+    "serverless-dotenv-plugin": "^2.3.2",
+    "serverless-offline": "^5.12.1",
+    "serverless-plugin-include-dependencies": "^4.0.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --config ./.prettierrc --write",
+      "eslint",
+      "git add"
+    ]
+  }
+}

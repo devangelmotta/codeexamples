@@ -1,0 +1,60 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+:root {
+  --header-height: 70px;
+  --yellow-gradient: linear-gradient(180deg, #fbe4a0 0%, #ffc13b 100%);
+
+  --gray-pt-100: #c5cdd4;
+  --gray-pt-200: #747d85;
+  --gray-pt-300: #293136;
+  --gray-pt-400: #f5f5f5;
+  --gray-pt-500: #818181;
+  --gray-pt-600: #e2e2e2;
+  --gray-pt-700: #bcbcbc;
+
+  --yellow-pt-100: #f3a73b;
+  --yellow-pt-200: #ffc13b;
+  --yellow-pt-300: #fce4a1;
+  --yellow-pt-400: #ffe497;
+
+  --blue-pt-100: #223066;
+  --blue-pt-200: #2453a5;
+  --blue-pt-300: #a1cafc;
+
+  --green-pt-100: #3dca36;
+  --green-pt-200: #28432e;
+
+  --red-pt-100: #f5515f;
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  color: var(--gray-pt-300);
+  font-family: 'Public Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.1em;
+}
+
+p {
+  font-size: 1.1rem;
+  line-height: 1.4em;
+}

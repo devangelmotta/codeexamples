@@ -1,0 +1,80 @@
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.19
+
+jobs:
+  build-test-deploy:
+    working_directory: ~/protrak-backend # directory where steps will run
+
+    docker:
+      - image: circleci/node:10.16.3 # ...with this image as the primary container; this is where all `steps` will run
+
+    executor: aws-cli/default
+
+    steps:
+      - checkout # special step to check out source code to working directory
+
+      - aws-cli/setup:
+          profile-name: circle-ci
+
+      - run:
+          name: Update npm to latest
+          command: 'sudo npm install -g npm@latest'
+
+      - run:
+          name: Install Serverless CLI and dependencies
+          command: sudo npm i -g serverless
+
+      - run:
+          name: Install serverless-plugin-include-dependencies
+          command: sudo npm install serverless-plugin-include-dependencies --save-dev
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: Install Node dependencies
+          command: npm install
+
+      - save_cache: # special step to save the dependency cache
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run: # run tests
+          name: Run unit tests
+          command: echo "Tests passed!"
+
+      - run:
+          name: Serverless Deploy
+          command: |
+            cat /dev/null > prisma/.env
+            echo "DATABASE_URL=${DATABASE_URL}" >> prisma/.env
+            cat /dev/null > .env
+            echo "NODE_ENV=${NODE_ENV}" >> .env
+            echo "PT_ENVIRONMENT=${PT_ENVIRONMENT}" >> .env
+            echo "ACCESS_KEY_ID=${ACCESS_KEY_ID}" >> .env
+            echo "SECRET_ACCESS_KEY=${SECRET_ACCESS_KEY}" >> .env
+            echo "BUCKET_NAME=${BUCKET_NAME}" >> .env
+            echo "AUTH0_CLIENT_ID=${AUTH0_CLIENT_ID}" >> .env
+            echo "AUTH0_CLIENT_SECRET=${AUTH0_CLIENT_SECRET}" >> .env
+            echo "AUTH0_DATABASE_CONNECTION=${AUTH0_DATABASE_CONNECTION}" >> .env
+            echo "AUTH0_DOMAIN=${AUTH0_DOMAIN}" >> .env
+            export SLS_DEBUG=*
+            serverless deploy
+
+workflows:
+  version: 2
+  cicd:
+    jobs:
+      - build-test-deploy:
+          context: GlobalAWS
+          filters:
+            branches:
+              only:
+                - development

@@ -1,0 +1,14 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Source",
+        "source": "mysql"
+      },
+      "argument": "url",
+      "newValue": "\"mysql://admin:4W0MV2J86dTSVXyg3V08@protrak-staging-db.crozu0btptka.us-east-1.rds.amazonaws.com:3306/protrak-staging-db\""
+    }
+  ]
+}

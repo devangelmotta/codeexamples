@@ -1,0 +1,21 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Source",
+        "source": "mysql"
+      },
+      "argument": "url",
+      "newValue": "env(\"DATABASE_URL\")"
+    },
+    {
+      "tag": "CreateField",
+      "model": "User",
+      "field": "userName",
+      "type": "String",
+      "arity": "Optional"
+    }
+  ]
+}

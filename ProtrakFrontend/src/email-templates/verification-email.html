@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <link
+      href="https://fonts.googleapis.com/css?family=Public+Sans:400,700&display=swap"
+      rel="stylesheet"
+    />
+    <style type="text/css">
+      * {
+        font-family: 'Public Sans', sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+      <div style="max-width: 720px; border: 1px solid #f5f5f5;border-radius: 10px;">
+        <div
+          style="border: 10px 10px 0 0; background: linear-gradient(213.23deg, #fbe4a0 0%, #ffc13b 100%); border-radius: 10px 10px 0 0;"
+        >
+          <div
+            style="height: 53px; width: 170px; margin: 0 auto; display: flex; align-items: center; padding-top: 54px; padding-bottom: 54px; border: 10px 10px 0 0;"
+          >
+            <img
+              src="https://protrak-front-end.s3.amazonaws.com/dev/img/logo.png"
+              alt="Protrak logo"
+            />
+            <h1
+              style="line-height: 29px; color: #223066; font-size: 24px; padding-left: 15px;"
+            >
+              PROTRAK
+            </h1>
+          </div>
+        </div>
+        <div
+          style="background-color: #F5F5F5; margin: 0;  padding: 20px 40px; color: #747D85; font-size: 18px; border: 1px solid #C5CDD4; border-radius: 0 0 10px 10px;"
+        >
+          {% if user.name %}
+          <p style="text-align: left; margin: 0; padding: 16px 0;">
+            Hello, <span style="font-weight: bold;">{{user.name}}</span>.
+          </p>
+          {% else %}
+          <p style="text-align: left; margin: 0; padding: 16px 0;">Hello.</p>
+          {% endif %}
+          <p style="text-align: justify; margin: 0; padding: 16px 0;">
+            Thank you very much for believing in contractor, a new experience in process
+            management.
+          </p>
+          <p style="text-align: left; margin: 0; padding: 16px 0;">
+            We need you to confirm your email at the link below.
+          </p>
+          <div style="text-align: left;margin: 26px 0;">
+            <a
+              style="text-align: left; text-decoration: none; color: #223066; font-size: 22px; line-height: 27px; background-color: #FCE4A1; border-radius: 5px; padding: 16px 60px;"
+              href="{{url}}"
+              >Verify Account</a
+            >
+          </div>
+          <p style="text-align: left; margin: 0; padding: 16px 0; color: #747D85;">
+            Link: <a style="color: #747D85;" href="{{url}}">{{url}}</a>
+          </p>
+        </div>
+      </div>
+    </center>
+  </body>
+</html>
